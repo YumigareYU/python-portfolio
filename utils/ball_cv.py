@@ -69,7 +69,7 @@ def process_video(input_path, output_filename):
                 continue
             circularity = (4 * np.pi * area) / (perimeter * perimeter)
 
-            if circularity > 0.6:
+            if circularity > 0.8:
                 ((x, y), radius) = cv2.minEnclosingCircle(c)
                 cv2.circle(frame, (int(x), int(y)),
                            int(radius), (0, 255, 0), 2)
