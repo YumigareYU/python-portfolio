@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}股票分析儀表板{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; text-align: center;">
+    <h1>📈 互動式股價 K 線圖</h1>
+
+    <form method="POST" style="margin: 2rem 0; display: flex; justify-content: center; gap: 10px;">
+        <input type="text" name="ticker" placeholder="輸入代號 (例: NVDA, 2330.TW)" required
+            style="padding: 10px; font-size: 1.2rem; width: 300px;">
+        <button type="submit" class="btn">查詢</button>
+    </form>
+
+    {% if error %}
+    <div style="color: red; background: #fee; padding: 10px; margin-bottom: 20px;">
+        ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+    <div id="chart" style="width:100%; height:600px; border:1px solid #ddd;"></div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    {% if graph_json %}
+    <script>
+        // 除錯模式：將資料印在 Console
+        try {
+            var rawData = {{ graph_json | safe
+        }};
+        console.log("✅ 成功收到後端資料:", rawData);
+
+        // 繪製圖表
+        Plotly.newPlot('chart', rawData.data, rawData.layout);
+            
+        } catch (err) {
+            console.error("❌ 圖表繪製失敗:", err);
+            alert("圖表載入發生錯誤，請按 F12 查看 Console");
+        }
+    </script>
+    {% else %}
+    <p style="color: gray;">請輸入股票代號以開始查詢。</p>
+    {% endif %}
+</div>
+{% endblock %}

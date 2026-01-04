@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}貓咪滾球追蹤專案{% endblock %}
+
+{% block content %}
+<div style="text-align: center;">
+    <h1>🐱 貓咪滾球自動追蹤</h1>
+    <p>上傳您的影片，系統將自動辨識粉紅色的球體並畫出路徑。</p>
+
+    <div
+        style="margin: 2rem 0; padding: 2rem; background: #fff; border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+
+        <form method="POST" enctype="multipart/form-data"
+            style="width: 100%; display: flex; justify-content: center; gap: 10px; align-items: center;">
+            <label>上傳您的影片：</label>
+            <input type="file" name="video_file" accept="video/*" required>
+            <button type="submit" class="btn">開始分析上傳影片</button>
+        </form>
+
+        <div style="width: 100%; height: 1px; background: #eee;"></div>
+        <form method="POST" style="display: flex; align-items: center; gap: 10px;">
+            <label>沒有影片嗎？試試看範本：</label>
+            <input type="hidden" name="source_type" value="template">
+            <button type="submit" class="btn" style="background-color: #27ae60;">使用範本影片</button>
+        </form>
+    </div>
+
+    {% if result %}
+    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+        <div>
+            <h3>原始影片</h3>
+            <video width="400" controls>
+                <source src="{{ url_for('static', filename=original) }}" type="video/mp4">
+            </video>
+        </div>
+        <div>
+            <h3>辨識結果</h3>
+            <video width="400" controls>
+                <source src="{{ url_for('static', filename=result) }}" type="video/mp4">
+            </video>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

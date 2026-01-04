@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}我的作品集{% endblock %}
+
+{% block content %}
+<section class="portfolio-header">
+    <h1>我的專案作品</h1>
+    <p>這裡展示了我運用 Python 進行影像辨識、數據分析與自動化的實作成果。</p>
+</section>
+
+<div class="portfolio-grid">
+
+    <div class="project-card">
+        <div class="card-image"
+            style="background-color: #ddd; display: flex; align-items: center; justify-content: center; height: 200px;">
+            <span style="font-size: 3rem;">🐱</span>
+        </div>
+        <div class="card-content">
+            <h3>貓咪滾球自動追蹤</h3>
+            <p class="tech-stack">
+                <span class="tag">Python</span>
+                <span class="tag">OpenCV</span>
+                <span class="tag">Flask</span>
+            </p>
+            <p>上傳影片即可自動識別粉紅色球體軌跡，解決動態模糊與文字干擾問題。</p>
+            <a href="/portfolio/ball-tracking" class="btn-small">查看專案 &rarr;</a>
+        </div>
+    </div>
+
+    <div class="project-card">
+        <div class="card-image"
+            style="background-color: #f0f4f8; display: flex; align-items: center; justify-content: center; height: 200px;">
+            <span style="font-size: 3rem;">📈</span>
+        </div>
+        <div class="card-content">
+            <h3>股票 K 線圖分析</h3>
+            <p class="tech-stack">
+                <span class="tag">Python</span>
+                <span class="tag">yfinance</span>
+                <span class="tag">Plotly</span>
+            </p>
+            <p>即時抓取 Yahoo Finance 數據，繪製互動式 K 線圖，支援全球股市查詢。</p>
+            <a href="/portfolio/stock-analysis" class="btn-small">查看專案 &rarr;</a>
+        </div>
+    </div>
+
+    <div class="project-card placeholder">
+        <div class="card-image">
+            <span style="font-size: 3rem;">🔜</span>
+        </div>
+        <div class="card-content">
+            <h3>更多專案開發中...</h3>
+            <p>敬請期待未來的數據分析與 AI 應用作品。</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

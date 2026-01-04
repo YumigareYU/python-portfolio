@@ -1,0 +1,14 @@
+# 忽略 Python 編譯檔
+__pycache__/
+*.pyc
+
+# 忽略虛擬環境 (如果有的話)
+venv/
+env/
+
+# 忽略測試產生的結果影片 (雲端空間有限，不要傳這些)
+static/results/*
+static/uploads/*
+
+# 但是！我們想要保留「範本.mp4」，所以加這行「不忽略」它
+!static/uploads/範本.mp4
