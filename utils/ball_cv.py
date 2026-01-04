@@ -5,17 +5,14 @@ import os
 
 def process_video(input_path, output_filename):
     """
-    讀取影片，進行辨識，並強制轉存為 .webm 格式 (Linux/Web 最佳容錯方案)
+    優化版：強制縮小影片尺寸以節省 Render 記憶體，並輸出為 WebM
     """
-
-    # 1. 【關鍵修改】強制把副檔名改成 .webm
-    # 不管原本傳進來是 .mp4 還是 .avi，輸出都變成 .webm
+    # 設定輸出檔名 (.webm)
     name_no_ext, _ = os.path.splitext(output_filename)
     new_filename = name_no_ext + ".webm"
 
     # 設定輸出路徑
     output_dir = os.path.join('static', 'results')
-    # 確保資料夾存在 (雲端環境有時候需要這行)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -23,22 +20,32 @@ def process_video(input_path, output_filename):
 
     cap = cv2.VideoCapture(input_path)
 
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # --- 【關鍵修改 1】取得原始尺寸，計算縮放比例 ---
+    # 我們強制把寬度縮小到 640 像素 (對 OpenCV 來說很夠用了)
+    original_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    original_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    target_width = 640
+    # 計算等比例的高度
+    aspect_ratio = original_height / original_width
+    target_height = int(target_width * aspect_ratio)
+
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    # 2. 【關鍵修改】改用 VP8 編碼器 (對應 .webm)
-    # 這是 Linux 伺服器最安全的選擇
+    # --- 【關鍵修改 2】Writer 使用「縮小後」的尺寸 ---
     fourcc = cv2.VideoWriter_fourcc(*'vp80')
-
-    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+    out = cv2.VideoWriter(output_path, fourcc, fps,
+                          (target_width, target_height))
 
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
 
-        # --- 影像處理邏輯 (維持原本的樣子) ---
+        # --- 【關鍵修改 3】在處理前，先縮小畫面！(省記憶體救星) ---
+        frame = cv2.resize(frame, (target_width, target_height))
+
+        # --- 以下辨識邏輯維持不變 ---
         blurred = cv2.GaussianBlur(frame, (11, 11), 0)
         hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -68,12 +75,11 @@ def process_video(input_path, output_filename):
                            int(radius), (0, 255, 0), 2)
                 cv2.putText(frame, f"Ball: {circularity:.2f}", (int(x), int(y)-20),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        # -----------------------------------
 
+        # 寫入縮小後的 Frame
         out.write(frame)
 
     cap.release()
     out.release()
 
-    # 3. 回傳新的檔名 (.webm) 給 app.py
     return f"results/{new_filename}"
